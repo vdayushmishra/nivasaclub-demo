@@ -1,0 +1,103 @@
+.demo-role-button{border:1px solid #e7e5e4;border-radius:999px;background:#fff;padding:6px 11px;font-size:10px;font-weight:700;color:#57534e;transition:.15s}
+.demo-role-button:hover{border-color:#9bada0;color:#163d32}
+.demo-role-button.active{border-color:#123d32;background:#123d32;color:#fff}
+.sample-role-button{border-style:dashed;color:#416a4b}
+.reset-role-button{color:#99533b}
+.role-toolbar-divider{height:20px;border-left:1px solid #e7e5e4;margin:0 2px}
+.gateway-launch{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:82px;padding:15px 17px;border:1px solid #e7e5e4;border-radius:16px;background:#fff;text-align:left;transition:.18s}
+.gateway-launch:hover{transform:translateY(-2px);border-color:#b6c8b7;box-shadow:0 10px 24px #153d3010}
+.gateway-launch>span{display:grid;grid-template-columns:24px 1fr;align-items:center;column-gap:9px;row-gap:4px}
+.gateway-launch>span>i{grid-row:span 2;font-size:16px}
+.gateway-launch strong{font-size:12px;color:#153d32}
+.gateway-launch small{grid-column:2;font-size:9px;color:#78716c;line-height:1.45}
+.gateway-launch>i{font-size:12px;color:#54735c}
+.partner-offer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid #e7e5e4;border-radius:14px;background:#fff}
+.partner-offer>div{min-width:0}
+.partner-offer strong{font-size:11px;color:#173c31}
+.partner-offer p{margin:4px 0;font-size:9px;color:#78716c}
+.partner-offer span{font-size:8px;color:#4f795a;font-weight:700}
+.offer-button{flex:none;border:1px solid #d5e0d5;border-radius:9px;background:#f4f8f3;padding:8px 10px;color:#295c38;font-size:9px;font-weight:800;cursor:pointer}
+.offer-button:hover{background:#e8f2e7}
+.cross-sell-card{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid #e7e5e4;border-radius:18px;background:#fff;padding:18px}
+.cross-sell-card p{max-width:440px;line-height:1.5}
+.fintech-overlay{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;background:#0b211dcc;backdrop-filter:blur(4px)}
+.fintech-overlay.hidden{display:none}
+.fintech-dialog{position:relative;width:min(680px,100%);max-height:min(90vh,900px);overflow:auto;border:1px solid #e7e5e4;border-radius:20px;background:#fff;padding:24px;box-shadow:0 24px 80px #09291e55}
+.fintech-close{position:sticky;float:right;top:0;z-index:2;width:32px;height:32px;margin:-7px -7px 0 8px;border:0;border-radius:50%;background:#f5f5f4;color:#57534e;font-size:22px;line-height:1;cursor:pointer}
+.fintech-close:hover{background:#e7e5e4}
+.fintech-dialog h2{margin:5px 35px 7px 0;font-size:20px;font-weight:800;line-height:1.25;color:#143a2f}
+.fintech-kicker{font-size:9px;font-weight:800;letter-spacing:1.3px;color:#bf5632;text-transform:uppercase}
+.fintech-subtitle{font-size:11px;line-height:1.55;color:#78716c}
+.gateway-amount{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:17px 0;padding:14px;border:1px solid #dce8dc;border-radius:13px;background:#f4f8f3}
+.gateway-amount small{display:block;color:#78716c;font-size:9px}
+.gateway-amount strong{font-size:23px;font-weight:800;color:#173d32}
+.gateway-amount .gateway-total{font-size:11px;text-align:right}
+.gateway-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0}
+.gateway-tab{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:10px 7px;text-align:center;color:#57534e;font-size:9px;font-weight:700;cursor:pointer}
+.gateway-tab.active{border-color:#164533;background:#edf5ed;color:#174632}
+.gateway-tab small{display:block;margin-top:3px;color:#78716c;font-size:8px;font-weight:500}
+.gateway-method-panel{min-height:86px;padding:13px;border:1px solid #e7e5e4;border-radius:12px;background:#fafaf9}
+.gateway-method-panel label{display:block;margin-bottom:5px;font-size:9px;font-weight:700;color:#44403c}
+.gateway-method-panel input,.lead-grid input,.lead-grid select{width:100%;height:38px;border:1px solid #d6d3d1;border-radius:8px;background:#fff;padding:0 10px;color:#292524;font-size:11px;outline:none}
+.gateway-method-panel input:focus,.lead-grid input:focus,.lead-grid select:focus{border-color:#588363;box-shadow:0 0 0 3px #54845f20}
+.gateway-method-panel p{margin:0;font-size:10px;line-height:1.55;color:#6b7280}
+.gateway-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}
+.gateway-actions button,.lead-submit{min-height:40px;border:0;border-radius:9px;padding:9px 13px;font-size:10px;font-weight:800;cursor:pointer}
+.gateway-success{background:#174632;color:#fff}
+.gateway-failure{background:#fff3ed;color:#a34830;border:1px solid #f1cbbc!important}
+.gateway-actions button:hover,.lead-submit:hover{filter:brightness(.96)}
+.fee-line{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #e7e5e4;font-size:9px;color:#57534e}
+.fee-line.total{border:0;font-size:11px;font-weight:800;color:#173c31}
+.ledger-status{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:4px 8px;font-size:9px;font-weight:800}
+.ledger-status.success{background:#eaf5e9;color:#347341}
+.ledger-status.failed{background:#fff0eb;color:#ad5038}
+.ledger-status.pending{background:#f4f4f2;color:#78716c}
+.receipt-link{border:0;background:transparent;color:#276543;font-size:9px;font-weight:800;text-decoration:underline;cursor:pointer}
+.fintech-modal-note{margin-top:13px;padding:10px 12px;border-left:3px solid #bdcdbb;background:#f5f8f3;color:#68756b;font-size:9px;line-height:1.55}
+.receipt-paper{border:1px solid #d6d3d1;background:#fff;padding:22px;margin-top:15px;color:#292524}
+.receipt-paper h3{margin:0 0 4px;font-size:16px;font-weight:800;color:#173d32}
+.receipt-paper>p{margin:0;font-size:9px;color:#78716c}
+.receipt-data{margin-top:13px;border-top:1px solid #e7e5e4}
+.receipt-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #f0eeec;font-size:9px}
+.receipt-row strong{text-align:right}
+.receipt-footer{margin-top:13px;padding:10px;background:#f5f7f3;font-size:8px;line-height:1.55;color:#68756b}
+.receipt-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.receipt-actions button{border:1px solid #d6d3d1;border-radius:8px;background:#fff;padding:8px 10px;color:#234c35;font-size:9px;font-weight:800;cursor:pointer}
+.lead-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px}
+.lead-grid label{display:block;color:#57534e;font-size:9px;font-weight:700}
+.lead-grid input,.lead-grid select{display:block;margin-top:5px}
+.lead-submit{width:100%;margin-top:14px;background:#174632;color:#fff}
+.lead-success{margin-top:13px;border:1px solid #cfe3cd;border-radius:12px;background:#eff7ed;padding:13px;color:#365e3a;font-size:10px;line-height:1.6}
+.lead-admin-row{display:grid;grid-template-columns:1.2fr 1fr .8fr .8fr;gap:10px;align-items:center;border:1px solid #d9e7d5;border-radius:11px;background:#fff;padding:11px;font-size:9px}
+.lead-admin-row strong{display:block;color:#174632}
+.lead-admin-row small{display:block;margin-top:3px;color:#78716c}
+.lead-admin-row .commission{font-weight:800;color:#347341}
+.agreement-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.agreement-preview-grid>div{border:1px solid #e7e5e4;border-radius:10px;padding:11px}
+.agreement-preview-grid small{display:block;font-size:8px;letter-spacing:.6px;color:#78716c}
+.agreement-preview-grid strong{display:block;margin-top:4px;font-size:10px;color:#173d32}
+.payment-payment-method{font-size:9px;font-weight:700;color:#365a40}
+.fintech-dialog .modal-kicker{font-size:9px;font-weight:800;letter-spacing:1px;color:#bb5630}
+@media(max-width:640px){
+  .demo-role-button{padding:6px 9px;font-size:9px}
+  .gateway-launch{min-height:72px;padding:11px}
+  .gateway-launch strong{font-size:10px}
+  .gateway-launch small{font-size:8px}
+  .fintech-overlay{padding:8px;align-items:flex-end}
+  .fintech-dialog{max-height:92vh;border-radius:18px;padding:18px 15px}
+  .gateway-tabs{gap:4px}
+  .gateway-tab{padding:9px 4px;font-size:8px}
+  .gateway-tab small{font-size:7px}
+  .gateway-actions{grid-template-columns:1fr}
+  .lead-grid,.agreement-preview-grid{grid-template-columns:1fr}
+  .lead-admin-row{grid-template-columns:1fr 1fr}
+  .cross-sell-card{align-items:flex-start;flex-direction:column}
+  #payments-gateway table{min-width:700px}
+}
+@media print{
+  body>*{visibility:hidden!important}
+  #fintechModal,#fintechModal *{visibility:visible!important}
+  #fintechModal{position:absolute!important;inset:0!important;display:block!important;background:#fff!important;padding:0!important}
+  .fintech-dialog{width:100%!important;max-height:none!important;overflow:visible!important;border:0!important;box-shadow:none!important;padding:0!important}
+  .fintech-close,.receipt-actions{display:none!important}
+}

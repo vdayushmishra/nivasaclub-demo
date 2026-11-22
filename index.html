@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NivasaClub — DigiLocker KYC, AutoPay Score, Deposit Vault &amp; Home Help</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="fintech.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            forest: {
+              900: '#0d2b24',
+              800: '#133d33',
+              700: '#1b5245',
+              100: '#e6f2ef',
+            },
+            terracotta: {
+              600: '#c9532b',
+              500: '#de6238',
+              100: '#fdece6',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      scroll-behavior: smooth;
+    }
+    input[type="range"].nivasa-range {
+      accent-color: #c9532b;
+    }
+  </style>
+</head>
+<body class="bg-stone-50 text-slate-900 antialiased selection:bg-terracotta-500 selection:text-white">
+
+  <!-- Toast Message Box (replaces alert/confirm) -->
+  <div id="nivasaToast" class="fixed bottom-5 right-5 z-50 hidden max-w-md rounded-2xl bg-forest-900 text-white px-5 py-4 shadow-2xl border border-forest-700" role="status" aria-live="polite">
+    <div class="flex items-start gap-3">
+      <div class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-terracotta-500 text-white">
+        <i id="toastIcon" class="fa-solid fa-check text-xs"></i>
+      </div>
+      <div class="flex-1 text-xs sm:text-sm">
+        <p id="toastTitle" class="font-bold text-white">NivasaClub Status</p>
+        <p id="toastBody" class="text-stone-300 text-xs mt-0.5 leading-relaxed"></p>
+      </div>
+      <button type="button" onclick="hideToast()" aria-label="Close alert" class="text-stone-400 hover:text-white p-1 rounded-lg cursor-pointer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-stone-200">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between gap-3">
+        <a href="#top" class="flex items-center gap-2.5">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-forest-900 text-white font-extrabold text-lg">
+            N
+          </div>
+          <div>
+            <span class="text-xl font-extrabold tracking-tight text-forest-900">Nivasa<span class="text-terracotta-600">Club</span></span>
+            <span class="hidden sm:block text-[11px] font-medium text-stone-500 -mt-1">DigiLocker KYC • NBFC Score • Living OS</span>
+          </div>
+        </a>
+
+        <nav class="hidden lg:flex items-center gap-4 text-xs xl:text-sm font-medium text-stone-700">
+          <a href="#rentals" class="hover:text-terracotta-600 transition">Find a home</a>
+          <a href="#digilocker-kyc" class="hover:text-terracotta-600 transition">DigiLocker KYC</a>
+          <a href="#autopay-score" class="hover:text-terracotta-600 transition">Score &amp; AutoPay</a>
+          <a href="#payments-gateway" class="hover:text-terracotta-600 transition">Payments</a>
+          <a href="#home-loan-fintech" class="hover:text-terracotta-600 transition">Home Loan</a>
+          <a href="#deposit-vault" class="hover:text-terracotta-600 transition">Deposit &amp; Vault</a>
+          <a href="#home-addons" class="hover:text-terracotta-600 transition">Home Help &amp; Add-Ons</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="openSummaryModal('revenue')" class="rounded-xl border border-stone-300 bg-white px-3.5 py-2 text-xs sm:text-sm font-semibold text-forest-900 hover:bg-stone-100 transition cursor-pointer">
+            <i class="fa-solid fa-coins text-terracotta-600 mr-1.5"></i>Revenue Model
+          </button>
+          <button type="button" onclick="openSummaryModal('nbfc')" class="rounded-xl bg-terracotta-600 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-terracotta-500 transition cursor-pointer">
+            NBFC &amp; Pilot
+          </button>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-stone-100 py-2">
+        <div class="flex items-center gap-2">
+          <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-extrabold tracking-wider text-emerald-800">DEMO ROLE</span>
+          <span id="demoRoleStatus" class="text-[10px] font-semibold text-stone-500">Tenant view · local demo</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5" role="group" aria-label="Switch demo role">
+          <button type="button" class="demo-role-button active" data-demo-role="tenant" onclick="setDemoRole('tenant')">Tenant</button>
+          <button type="button" class="demo-role-button" data-demo-role="landlord" onclick="setDemoRole('landlord')">Landlord</button>
+          <button type="button" class="demo-role-button" data-demo-role="admin" onclick="setDemoRole('admin')">Partner/Admin</button>
+          <span class="role-toolbar-divider"></span>
+          <button type="button" class="demo-role-button sample-role-button" onclick="loadSampleTenant()">Load Sample Tenant</button>
+          <button type="button" class="demo-role-button sample-role-button" onclick="loadSampleLandlord()">Load Sample Landlord</button>
+          <button type="button" class="demo-role-button reset-role-button" onclick="resetFintechDemo()">Reset Demo Data</button>
+        </div>
+      </div>
+      <nav aria-label="Mobile navigation" class="flex lg:hidden gap-4 overflow-x-auto border-t border-stone-100 py-2 text-xs font-semibold text-stone-600">
+        <a href="#rentals" class="shrink-0">Homes</a><a href="#digilocker-kyc" class="shrink-0">KYC</a><a href="#autopay-score" class="shrink-0">Score &amp; AutoPay</a><a href="#payments-gateway" class="shrink-0">Payments</a><a href="#home-loan-fintech" class="shrink-0">Home Loan</a><a href="#deposit-vault" class="shrink-0">Deposit Vault</a><a href="#helper-hub" class="shrink-0">Home help</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO SECTION -->
+    <section class="bg-forest-900 text-white py-12 sm:py-16 border-b border-forest-800">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-8 space-y-5">
+            <div class="flex flex-wrap gap-2">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-forest-800 border border-forest-700 px-3.5 py-1 text-xs font-semibold text-emerald-200">
+                <i class="fa-solid fa-id-card text-emerald-400"></i>
+                Consent-led KYC prototype
+              </span>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-terracotta-600/20 border border-terracotta-500/40 px-3.5 py-1 text-xs font-semibold text-terracotta-100">
+                <i class="fa-solid fa-shield-halved text-terracotta-400"></i>
+                5-Layer Anti-Proxy + Couple-Friendly
+              </span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-[1.12]">
+              Verified Ghar. <span class="text-terracotta-500">Smart Hisaab.</span> Trusted Living.
+            </h1>
+
+            <p class="text-base sm:text-lg text-stone-300 max-w-2xl leading-relaxed">
+              Jab zero setup ya naye pilot se shuruat ho, tab <strong>DigiLocker KYC</strong> se identity pakki hoti hai, <strong>selfie + bank/bill check</strong> se fraud rukta hai, aur <strong>AutoPay + Nivasa Score + 4-Stage Deposit + Condition Vault + Maid/Cook/Dhobi</strong> sab ek jagah chalte hain.
+            </p>
+
+            <div class="flex flex-wrap gap-3 pt-1">
+              <a href="#rentals" class="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-forest-900 transition hover:bg-stone-100">
+                <i class="fa-solid fa-magnifying-glass"></i>Explore verified homes
+              </a>
+              <a href="#digilocker-kyc" class="inline-flex items-center gap-2 rounded-xl bg-terracotta-600 hover:bg-terracotta-500 px-5 py-3 text-sm font-bold text-white transition">
+                <i class="fa-solid fa-fingerprint"></i>
+                Test DigiLocker KYC Simulator
+              </a>
+              <a href="#autopay-score" class="inline-flex items-center gap-2 rounded-xl bg-forest-800 hover:bg-forest-700 border border-forest-700 px-5 py-3 text-sm font-semibold text-white transition">
+                <i class="fa-solid fa-gauge-high text-emerald-300"></i>
+                Check Nivasa Score &amp; AutoPay
+              </a>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 rounded-3xl bg-forest-800/90 border border-forest-700 p-6 space-y-4">
+            <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Consent-led prototype</p>
+            <h2 class="text-lg font-extrabold text-white">DigiLocker Kyun &amp; Kya Saath Mein?</h2>
+            <ul class="space-y-2.5 text-xs text-stone-200 leading-relaxed">
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5"></i>
+                <span><strong>Simulated DigiLocker flow:</strong> Explicit demo consent is required; this page does not connect to DigiLocker or read identity data.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5"></i>
+                <span><strong>Anti-proxy checks:</strong> Five proposed layers are represented as local demo controls, not screening decisions.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5"></i>
+                <span><strong>Owner details:</strong> Name, payout and property-proof matching are illustrative and are not independently verified here.</span>
+              </li>
+            </ul>
+            <p class="border-t border-forest-700 pt-3 text-[10px] leading-relaxed text-stone-400">Sample records only. No Aadhaar, PAN, financial, device or biometric information is transmitted or stored by this frontend.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VERIFIED RENTAL DISCOVERY -->
+    <section id="rentals" class="py-14 sm:py-20 bg-stone-50 border-b border-stone-200">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8">
+          <div class="max-w-3xl">
+            <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Find your next home</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">Homes with the important details upfront</h2>
+            <p class="text-sm sm:text-base text-stone-600 mt-2">Owner identity, society rules, deposit and couple-friendly opt-in—clearly shown before you book a visit.</p>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full lg:max-w-3xl">
+            <label class="sr-only" for="cityFilter">City</label>
+            <select id="cityFilter" onchange="renderListings()" class="rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm font-semibold text-forest-900">
+              <option value="all">All cities</option><option>Bengaluru</option><option>Mumbai</option><option>Delhi NCR</option><option>Pune</option><option>Hyderabad</option><option>Lucknow</option>
+            </select>
+            <label class="sr-only" for="localityFilter">Locality</label>
+            <select id="localityFilter" onchange="renderListings()" class="rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm font-semibold text-forest-900"><option value="all">All localities</option></select>
+            <label class="sr-only" for="propertyTypeFilter">Property type</label>
+            <select id="propertyTypeFilter" onchange="renderListings()" class="rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm font-semibold text-forest-900">
+              <option value="all">Any type</option><option value="Apartment">Apartment</option><option value="Studio">Studio</option><option value="Independent">Independent</option>
+            </select>
+            <label class="flex items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-bold text-forest-900">
+              <input id="coupleOnlyFilter" type="checkbox" onchange="renderListings()" class="h-4 w-4 accent-forest-900"> Couple-friendly
+            </label>
+          </div>
+        </div>
+        <p id="listingCount" class="mb-4 text-xs font-semibold text-stone-500" aria-live="polite"></p>
+        <div id="listingGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+      </div>
+    </section>
+
+    <!-- 1. INTERACTIVE DIGILOCKER KYC VERIFICATION SIMULATOR (TENANT & LANDLORD) -->
+    <section id="digilocker-kyc" class="py-14 sm:py-20 bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div class="max-w-3xl">
+            <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Step 01 • Zero-Setup Trust Gate</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">
+              DigiLocker KYC Simulator (Tenant &amp; Landlord)
+            </h2>
+            <p class="text-sm sm:text-base text-stone-600 mt-2">
+              Dekhein kaise <strong>Tenant</strong> aur <strong>Landlord</strong> dono ki DigiLocker KYC + live selfie + bank/property proof + anti-proxy / couple agreement check kaam karti hai.
+            </p>
+          </div>
+
+          <!-- Role Switcher -->
+          <div class="inline-flex rounded-2xl bg-stone-100 p-1.5 border border-stone-200 self-start">
+            <button type="button" id="kycRoleTenantBtn" onclick="switchKycRole('tenant')" class="rounded-xl px-4 py-2 text-xs sm:text-sm font-bold bg-forest-900 text-white transition cursor-pointer">
+              <i class="fa-solid fa-user mr-1.5"></i>Tenant / Couple KYC
+            </button>
+            <button type="button" id="kycRoleLandlordBtn" onclick="switchKycRole('landlord')" class="rounded-xl px-4 py-2 text-xs sm:text-sm font-semibold text-stone-700 hover:text-forest-900 transition cursor-pointer">
+              <i class="fa-solid fa-house-user mr-1.5"></i>Landlord KYC
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Left: Interactive Controls -->
+          <div class="lg:col-span-7 rounded-3xl bg-stone-50 border border-stone-200 p-6 sm:p-8 space-y-6">
+            <!-- TENANT / COUPLE KYC PANEL -->
+            <div id="tenantKycPanel" class="space-y-5">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-4">
+                <div>
+                  <h3 class="text-lg font-extrabold text-forest-900">Tenant &amp; Couple DigiLocker Verification</h3>
+                  <p class="text-xs text-stone-500">DigiLocker consent + selfie + anti-proxy + couple agreement check</p>
+                </div>
+                <button type="button" onclick="simulateDigiLockerFetch('tenant')" class="rounded-xl bg-forest-900 hover:bg-forest-800 text-white text-xs font-bold px-4 py-2.5 transition cursor-pointer">
+                  <i class="fa-solid fa-cloud-arrow-down mr-1.5 text-emerald-300"></i>Simulate DigiLocker Fetch
+                </button>
+              </div>
+
+              <label class="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-stone-700">
+                <input id="tenantConsentCheck" type="checkbox" onchange="evaluateKyc()" class="mt-0.5 h-4 w-4 accent-forest-900">
+                <span><strong>Demo consent:</strong> I consent to a simulated DigiLocker attribute fetch for this prototype. No Aadhaar/PAN data leaves this page; no real government or bureau service is contacted.</span>
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="tenantNameInput" class="block text-xs font-bold uppercase text-stone-600 mb-1">Applicant Name (as on DigiLocker)</label>
+                  <input id="tenantNameInput" type="text" value="Rohan Verma" oninput="evaluateKyc()" class="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-sm font-medium" />
+                </div>
+                <div>
+                  <label for="tenantAgeSelect" class="block text-xs font-bold uppercase text-stone-600 mb-1">Adult Age Check (18+)</label>
+                  <select id="tenantAgeSelect" onchange="evaluateKyc()" class="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-sm font-medium">
+                    <option value="26">26 yrs (Verified 18+ Adult)</option>
+                    <option value="22">22 yrs (Verified 18+ Adult)</option>
+                    <option value="17">17 yrs (Under 18 — Co-Signer / Guardian Required)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer sm:col-span-2">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-people-group text-emerald-700 mr-1.5"></i>All adult occupants (18+) complete KYC</span>
+                  <input id="tAllAdultsCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-file-shield text-emerald-700 mr-1.5"></i>DigiLocker Aadhaar + PAN Shared</span>
+                  <input id="tDigiLockerCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-camera-retro text-terracotta-600 mr-1.5"></i>Live Selfie Face-Match Passed</span>
+                  <input id="tSelfieCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-ban text-forest-700 mr-1.5"></i>Anti-Proxy: Primary Payer = Applicant</span>
+                  <input id="tAntiProxyCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-heart text-terracotta-600 mr-1.5"></i>Couple Application (Both 18+ KYC)</span>
+                  <input id="tCoupleCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-terracotta-600 cursor-pointer" />
+                </label>
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-wallet text-emerald-700 mr-1.5"></i>Income / Bank Cashflow Check</span>
+                  <input id="tIncomeCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-diagram-project text-emerald-700 mr-1.5"></i>Device / Phone / UPI / Address Graph</span>
+                  <input id="tGraphCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-key text-emerald-700 mr-1.5"></i>Move-In / Gate Sync</span>
+                  <input id="tGateCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+              </div>
+
+              <!-- Couple Agreement Selector when Couple Check is enabled -->
+              <div id="coupleAgreementSelectorWrap" class="rounded-2xl bg-terracotta-100/50 border border-terracotta-500/30 p-4 space-y-2">
+                <label for="coupleAgreementSelect" class="block text-xs font-extrabold uppercase text-forest-900">
+                  Couple-Friendly Agreement Type (No Intrusive Questions)
+                </label>
+                <select id="coupleAgreementSelect" onchange="evaluateKyc()" class="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2 text-xs sm:text-sm font-semibold text-forest-900">
+                  <option value="joint">Joint Co-Tenants Agreement (Dono partners ka naam co-tenants mein)</option>
+                  <option value="primary">Primary Payer + Registered Co-Occupant (Earning payer + verified co-occupant)</option>
+                  <option value="split">Custom Rent/Bill Split &amp; Notice Clause (50/50 ya custom split)</option>
+                </select>
+                <p id="coupleAgreementPreview" class="text-xs text-stone-700 leading-relaxed pt-1"></p>
+              </div>
+            </div>
+
+            <!-- LANDLORD KYC PANEL -->
+            <div id="landlordKycPanel" class="hidden space-y-5">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-4">
+                <div>
+                  <h3 class="text-lg font-extrabold text-forest-900">Landlord DigiLocker, Bank &amp; Property Check</h3>
+                  <p class="text-xs text-stone-500">DigiLocker ID + live selfie + bank account name match + utility/property bill</p>
+                </div>
+                <button type="button" onclick="simulateDigiLockerFetch('landlord')" class="rounded-xl bg-forest-900 hover:bg-forest-800 text-white text-xs font-bold px-4 py-2.5 transition cursor-pointer">
+                  <i class="fa-solid fa-cloud-arrow-down mr-1.5 text-emerald-300"></i>Simulate Owner Fetch
+                </button>
+              </div>
+
+              <label class="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-stone-700">
+                <input id="landlordConsentCheck" type="checkbox" onchange="evaluateKyc()" class="mt-0.5 h-4 w-4 accent-forest-900">
+                <span><strong>Demo consent:</strong> I consent to a simulated DigiLocker attribute fetch for this prototype. No identity or property data is sent to an external service.</span>
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="landlordNameInput" class="block text-xs font-bold uppercase text-stone-600 mb-1">Owner Name (DigiLocker)</label>
+                  <input id="landlordNameInput" type="text" value="Suresh Kulkarni" oninput="evaluateKyc()" class="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-sm font-medium" />
+                </div>
+                <div>
+                  <label for="landlordBankNameInput" class="block text-xs font-bold uppercase text-stone-600 mb-1">Payout Bank Account Holder Name</label>
+                  <input id="landlordBankNameInput" type="text" value="Suresh Kulkarni" oninput="evaluateKyc()" class="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-sm font-medium" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-id-badge text-emerald-700 mr-1.5"></i>DigiLocker Aadhaar + PAN Verified</span>
+                  <input id="lDigiLockerCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-camera text-terracotta-600 mr-1.5"></i>Live Selfie Match Done</span>
+                  <input id="lSelfieCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-bolt text-amber-600 mr-1.5"></i>Electricity / Property Bill Verified</span>
+                  <input id="lBillCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+                </label>
+
+                <label class="flex items-center justify-between rounded-2xl bg-white border border-stone-200 p-3.5 cursor-pointer">
+                  <span class="text-xs font-bold text-forest-900"><i class="fa-solid fa-heart-circle-check text-terracotta-600 mr-1.5"></i>Opt-In Couple-Friendly Listing</span>
+                  <input id="lCoupleOptInCheck" type="checkbox" checked onchange="evaluateKyc()" class="h-4 w-4 accent-terracotta-600 cursor-pointer" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Live KYC Readiness & Audit Card -->
+          <div class="lg:col-span-5 rounded-3xl bg-forest-900 text-white p-6 sm:p-8 shadow-xl space-y-5">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Live Verification Status</p>
+                <h3 id="kycStatusTitle" class="text-2xl font-extrabold text-white mt-0.5">KYC Verified • Ready</h3>
+              </div>
+              <span id="kycScorePill" class="rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 px-3 py-1 text-xs font-bold">
+                100% Complete
+              </span>
+            </div>
+
+            <div class="h-2.5 w-full rounded-full bg-forest-800 overflow-hidden">
+              <div id="kycProgressBar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 100%;"></div>
+            </div>
+
+            <div id="kycChecklistOutput" class="space-y-2.5 text-xs">
+              <!-- Populated via JS -->
+            </div>
+
+            <button type="button" onclick="confirmKycStatus()" class="w-full rounded-xl bg-terracotta-600 hover:bg-terracotta-500 text-white font-bold py-3 px-4 text-sm transition cursor-pointer">
+            <i class="fa-solid fa-file-signature mr-1.5"></i>Generate Demo KYC &amp; Agreement Summary
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. NIVASA SCORE (300-900) & RENT AUTOPAY / CREDIT CARD SIMULATOR -->
+    <section id="autopay-score" class="py-14 sm:py-20 bg-stone-50 border-b border-stone-200">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mb-10">
+          <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Step 02 • Fintech &amp; NBFC Credit Layer</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">
+            Nivasa Score (300–900) &amp; Rent AutoPay Simulator
+          </h2>
+          <p class="text-sm sm:text-base text-stone-600 mt-2">
+            e-NACH / UPI AutoPay ya Credit Card se rent pay karne ka impact dekhein—bounce penalties, Nivasa Score gating, aur NBFC deposit/credit eligibility ke saath.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Controls -->
+          <div class="lg:col-span-7 rounded-3xl bg-white p-6 sm:p-8 border border-stone-200 shadow-sm space-y-6">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="monthlyRentInput" class="text-sm font-bold text-forest-900">Monthly Rent (₹)</label>
+                <span id="monthlyRentLabel" class="rounded-lg bg-forest-100 text-forest-900 px-3 py-1 text-sm font-extrabold">₹24,000</span>
+              </div>
+              <input id="monthlyRentInput" type="range" min="8000" max="100000" step="1000" value="24000" oninput="updateAutoPayScore()" class="nivasa-range w-full cursor-pointer" />
+            </div>
+
+            <div>
+              <p class="text-sm font-bold text-forest-900 mb-2.5">Rent Payment Mode</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <button type="button" id="modeEnachBtn" onclick="setPaymentMode('enach')" class="pay-mode-btn rounded-xl border-2 border-forest-900 bg-forest-100/60 p-3 text-left transition cursor-pointer">
+                  <span class="text-xs font-extrabold text-forest-900 block"><i class="fa-solid fa-building-columns mr-1"></i>e-NACH AutoPay</span>
+                  <span class="text-[11px] text-stone-600">Bank EMI debit • 0% fee</span>
+                </button>
+                <button type="button" id="modeUpiBtn" onclick="setPaymentMode('upi')" class="pay-mode-btn rounded-xl border border-stone-200 bg-stone-50 p-3 text-left transition cursor-pointer">
+                  <span class="text-xs font-extrabold text-forest-900 block"><i class="fa-solid fa-bolt mr-1"></i>UPI AutoPay</span>
+                  <span class="text-[11px] text-stone-600">Instant mandate • 0% fee</span>
+                </button>
+                <button type="button" id="modeCardBtn" onclick="setPaymentMode('card')" class="pay-mode-btn rounded-xl border border-stone-200 bg-stone-50 p-3 text-left transition cursor-pointer">
+                  <span class="text-xs font-extrabold text-terracotta-600 block"><i class="fa-regular fa-credit-card mr-1"></i>Credit Card Rent</span>
+                  <span class="text-[11px] text-stone-600">Card float • +1.25% fee</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label for="onTimeMonthsInput" class="text-xs font-bold text-forest-900">On-Time Months</label>
+                  <span id="onTimeMonthsLabel" class="text-xs font-extrabold text-emerald-800">8 Mos</span>
+                </div>
+                <input id="onTimeMonthsInput" type="range" min="0" max="24" step="1" value="8" oninput="updateAutoPayScore()" class="nivasa-range w-full cursor-pointer" />
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label for="bounceCountInput" class="text-xs font-bold text-forest-900">Bounce / Late Events</label>
+                  <span id="bounceCountLabel" class="text-xs font-extrabold text-terracotta-600">0 Bounces</span>
+                </div>
+                <input id="bounceCountInput" type="range" min="0" max="6" step="1" value="0" oninput="updateAutoPayScore()" class="nivasa-range w-full cursor-pointer" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Output Card -->
+          <div class="lg:col-span-5 rounded-3xl bg-forest-900 text-white p-6 sm:p-8 shadow-xl space-y-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">Nivasa Score</p>
+                <p class="text-5xl font-extrabold mt-1"><span id="nivasaScoreNum">748</span> <span class="text-sm font-semibold text-stone-400">/ 900</span></p>
+              </div>
+              <span id="nivasaTierLabel" class="rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 px-3 py-1 text-xs font-bold">
+                Trusted Tenant
+              </span>
+            </div>
+
+            <div class="h-3 w-full rounded-full bg-forest-800 overflow-hidden">
+              <div id="nivasaScoreBar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 75%;"></div>
+            </div>
+
+            <div class="rounded-2xl bg-forest-800/90 border border-forest-700 p-4 space-y-2 text-xs sm:text-sm">
+              <div class="flex justify-between">
+                <span class="text-stone-300">Monthly Rent</span>
+                <span id="calcRentOut" class="font-bold">₹24,000</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-stone-300">Credit Card Convenience Fee</span>
+                <span id="calcCardFeeOut" class="font-semibold text-emerald-300">₹0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-stone-300">Bounce Penalty (After Grace)</span>
+                <span id="calcBouncePenaltyOut" class="font-semibold text-amber-300">₹0</span>
+              </div>
+              <div class="border-t border-forest-700 pt-2 flex justify-between font-extrabold text-base">
+                <span>Total Monthly Payable</span>
+                <span id="calcTotalPayOut" class="text-terracotta-400">₹24,000</span>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/5 border border-white/10 p-3.5 text-xs space-y-1">
+              <p id="nbfcEligibilityText" class="font-bold text-white"></p>
+              <p id="gatingRuleText" class="text-stone-300 leading-relaxed"></p>
+              <p class="border-t border-white/10 pt-2 text-[10px] leading-relaxed text-stone-400">Nivasa Score is an illustrative, proprietary preview (not a bureau score). No credit offer or bureau reporting is made by this prototype.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAYMENTS & SIMULATED GATEWAY -->
+    <section id="payments-gateway" class="py-14 sm:py-20 bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8">
+          <div class="max-w-3xl">
+            <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Payments &amp; Gateway</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">One clear place for every payment.</h2>
+            <p class="text-sm text-stone-600 mt-2">Simulate rent, deposit milestone and household helper payments through a NivasaPay-style checkout.</p>
+          </div>
+          <span id="paymentRoleNote" class="rounded-full bg-stone-100 px-3 py-1.5 text-xs font-bold text-stone-600">Tenant ledger · demo only</span>
+        </div>
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
+          <article class="rounded-2xl border border-stone-200 bg-stone-50 p-4"><p class="text-[10px] font-bold uppercase tracking-wide text-stone-500">Monthly rent due</p><p id="paymentRentSummary" class="mt-2 text-xl font-extrabold text-forest-900">₹24,000</p><p class="mt-1 text-[10px] text-stone-500">Due 1st of each month · sample</p></article>
+          <article class="rounded-2xl border border-stone-200 bg-stone-50 p-4"><p class="text-[10px] font-bold uppercase tracking-wide text-stone-500">Deposit milestone</p><p id="depositMilestoneSummary" class="mt-2 text-sm font-extrabold text-forest-900">Stage 01 of 02 · pending</p><p id="depositMilestoneDetail" class="mt-1 text-[10px] text-stone-500">Booking milestone · sample</p></article>
+          <article class="rounded-2xl border border-stone-200 bg-stone-50 p-4"><p class="text-[10px] font-bold uppercase tracking-wide text-stone-500">AutoPay mandate</p><p id="autoPayMandateSummary" class="mt-2 text-sm font-extrabold text-forest-900">e-NACH · ready to authorize</p><p class="mt-1 text-[10px] text-stone-500">No bank mandate is created in this demo.</p></article>
+          <article class="rounded-2xl border border-stone-200 bg-stone-50 p-4"><p class="text-[10px] font-bold uppercase tracking-wide text-stone-500">Rewards &amp; cashback</p><p id="rewardsSummary" class="mt-2 text-xl font-extrabold text-forest-900">0 pts · ₹0</p><p class="mt-1 text-[10px] text-stone-500">Illustrative card reward estimate</p></article>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+          <button type="button" class="gateway-launch" data-payment-type="Rent"><span><i class="fa-solid fa-house text-emerald-700"></i><strong>Pay Rent Now</strong><small>Rent · card fee and rewards shown at checkout</small></span><i class="fa-solid fa-arrow-right"></i></button>
+          <button type="button" class="gateway-launch" data-payment-type="Deposit"><span><i class="fa-solid fa-shield-heart text-emerald-700"></i><strong>Pay Deposit Milestone</strong><small id="depositPayButtonDetail">Booking milestone · 15%</small></span><i class="fa-solid fa-arrow-right"></i></button>
+          <button type="button" class="gateway-launch" data-payment-type="Helper bills"><span><i class="fa-solid fa-people-group text-emerald-700"></i><strong>Pay Helper Bills</strong><small>Monthly maid, cook &amp; dhobi payout estimate</small></span><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <div id="paymentAlert" class="mb-5 hidden rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900" role="status" aria-live="polite"></div>
+        <div class="overflow-hidden rounded-2xl border border-stone-200 bg-white">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-200 p-4">
+            <div><h3 class="font-extrabold text-forest-900">Transaction &amp; AutoPay Ledger</h3><p class="text-[10px] text-stone-500">Local-only demo transactions and receipt previews.</p></div>
+            <label class="flex items-center gap-2 text-xs font-semibold text-stone-600">Filter
+              <select id="ledgerTypeFilter" class="rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-xs"><option value="all">All activity</option><option value="Rent">Rent</option><option value="Deposit">Deposit milestones</option><option value="Helper bills">Helper payouts</option><option value="failure">Bounces / failures</option></select>
+            </label>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[760px] text-left text-xs">
+              <thead class="bg-stone-50 text-[10px] uppercase tracking-wide text-stone-500"><tr><th class="px-4 py-3">Date / reference</th><th class="px-4 py-3">Type</th><th class="px-4 py-3">Payment method</th><th class="px-4 py-3">Amount</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Receipt</th></tr></thead>
+              <tbody id="transactionLedgerBody" class="divide-y divide-stone-100"></tbody>
+            </table>
+          </div>
+          <p id="ledgerEmpty" class="p-6 text-center text-xs text-stone-500">No transactions yet. Run a checkout simulation to populate this ledger.</p>
+        </div>
+        <p class="mt-4 text-[10px] leading-relaxed text-stone-500">Payments are simulated only. No money moves and no bank, card network, UPI app or payment gateway is contacted. Fees and rewards are illustrative and subject to provider terms and applicable tax rules.</p>
+      </div>
+    </section>
+
+    <!-- NIVASA SCORE-BASED HOME LOAN & FINTECH HUB -->
+    <section id="home-loan-fintech" class="py-14 sm:py-20 bg-stone-50 border-b border-stone-200">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mb-8">
+          <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Rent-to-Own Fintech · Partner Lead Preview</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">Your rent history can open a door to owning.</h2>
+          <p class="mt-2 text-sm text-stone-600">Explore illustrative bank / NBFC home-loan tiers, compare rent with an estimated EMI, and preview a local callback request.</p>
+        </div>
+        <div id="loanEligibilityBanner" class="mb-6 rounded-3xl bg-forest-900 p-5 sm:p-7 text-white">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div><span id="loanTierBadge" class="inline-flex rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-200">Score Builder Mode</span><h3 id="loanEligibilityTitle" class="mt-3 text-xl font-extrabold">Keep building your rent track record.</h3><p id="loanEligibilityCopy" class="mt-1 max-w-2xl text-xs leading-relaxed text-stone-300">A steady 3–6 month on-time AutoPay streak can help unlock a partner review for lower home-loan rates.</p></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-xl bg-white/10 px-4 py-3"><span class="block text-[9px] uppercase text-stone-300">Nivasa Score</span><strong id="loanScoreValue" class="mt-1 block text-2xl">748</strong></div>
+              <div class="rounded-xl bg-white/10 px-4 py-3"><span class="block text-[9px] uppercase text-stone-300">On-time rent streak</span><strong id="loanStreakValue" class="mt-1 block text-2xl">8 mo</strong></div>
+            </div>
+          </div>
+          <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <div class="rounded-xl border border-white/10 bg-white/5 p-3"><strong>Prime Club · 780+</strong><p class="mt-1 text-stone-300">8.35%–8.60% p.a. · discounted processing voucher · higher LTV review</p></div>
+            <div class="rounded-xl border border-white/10 bg-white/5 p-3"><strong>Verified · 700–779</strong><p class="mt-1 text-stone-300">8.75%–9.25% p.a. · rent-track-record consideration</p></div>
+            <div class="rounded-xl border border-white/10 bg-white/5 p-3"><strong>Score Builder · below 700</strong><p class="mt-1 text-stone-300">Build a 3–6 month on-time AutoPay streak to work toward lower tiers.</p></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          <article class="lg:col-span-7 rounded-3xl border border-stone-200 bg-white p-5 sm:p-7">
+            <div class="flex items-start justify-between gap-4"><div><span class="text-[10px] font-bold uppercase tracking-wider text-terracotta-600">Rent vs. buy calculator</span><h3 class="mt-1 text-lg font-extrabold text-forest-900">Make the monthly picture clearer.</h3></div><span id="loanRateValue" class="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-extrabold text-emerald-800">Rate: 9.75% p.a.</span></div>
+            <div class="mt-5 space-y-5">
+              <label class="block"><span class="mb-2 flex justify-between text-xs font-bold text-stone-700"><span>Property value</span><strong id="propertyValueLabel">₹80,00,000</strong></span><input id="propertyValueSlider" type="range" min="2000000" max="50000000" step="500000" value="8000000" class="w-full accent-forest-900"></label>
+              <label class="block"><span class="mb-2 flex justify-between text-xs font-bold text-stone-700"><span>Down payment</span><strong id="downPaymentLabel">₹16,00,000</strong></span><input id="downPaymentSlider" type="range" min="0" max="40000000" step="250000" value="1600000" class="w-full accent-forest-900"></label>
+              <label class="block"><span class="mb-2 flex justify-between text-xs font-bold text-stone-700"><span>Loan tenure</span><strong id="tenureLabel">20 years</strong></span><input id="tenureSlider" type="range" min="5" max="30" step="1" value="20" class="w-full accent-forest-900"></label>
+            </div>
+            <div class="mt-6 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl bg-stone-50 p-4"><p class="text-[10px] font-bold uppercase text-stone-500">Estimated home-loan EMI</p><strong id="loanEmiValue" class="mt-1 block text-xl font-extrabold text-forest-900">₹0</strong><small id="loanPrincipalValue" class="text-[10px] text-stone-500">Loan principal · illustrative</small></div>
+              <div id="rentCompareCard" class="rounded-2xl bg-emerald-50 p-4"><p class="text-[10px] font-bold uppercase text-emerald-800">Current monthly rent</p><strong id="currentRentCompare" class="mt-1 block text-xl font-extrabold text-forest-900">₹24,000</strong><small id="rentCompareCopy" class="text-[10px] text-emerald-800">Compare against estimated EMI</small></div>
+            </div>
+            <p class="mt-4 text-[10px] leading-relaxed text-stone-500">Illustrative reducing-balance EMI calculation, not a quote. Excludes taxes, insurance, fees, legal costs and lender-specific terms.</p>
+          </article>
+          <article class="lg:col-span-5 rounded-3xl border border-stone-200 bg-white p-5 sm:p-7">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-terracotta-600">Indicative partner panel</span>
+            <h3 class="mt-1 text-lg font-extrabold text-forest-900">A few places to start.</h3>
+            <div class="mt-4 space-y-3">
+              <div class="partner-offer"><div><strong>Leading Private Banks</strong><p>Home loan · up to 30-year tenure · partner underwriting</p><span id="bankRateRange">Rate band follows your score tier</span></div><button type="button" class="offer-button" data-partner="Leading Private Banks">Check exact offer</button></div>
+              <div class="partner-offer"><div><strong>Housing Finance Companies</strong><p>First-home options · up to 25-year tenure</p><span id="hfcRateRange">Rates follow your score tier</span></div><button type="button" class="offer-button" data-partner="Housing Finance Companies">Request callback</button></div>
+              <div class="partner-offer"><div><strong>Partner NBFC Network</strong><p>Flexible documentation · up to 25-year tenure</p><span id="nbfcRateRange">Rates follow your score tier</span></div><button type="button" class="offer-button" data-partner="Partner NBFC Network">Request callback</button></div>
+            </div>
+          </article>
+        </div>
+        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <article class="cross-sell-card"><div><span class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">NBFC-backed · eligibility applies</span><h3 class="mt-1 font-extrabold text-forest-900">Zero-deposit / deposit credit line</h3><p class="mt-1 text-xs text-stone-600">Explore an optional security-deposit credit line with a regulated lending partner.</p></div><button type="button" class="offer-button" data-partner="Security Deposit Credit Line">Explore</button></article>
+          <article class="cross-sell-card"><div><span class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Optional partner cover</span><h3 class="mt-1 font-extrabold text-forest-900">Renters &amp; home contents micro-insurance</h3><p class="mt-1 text-xs text-stone-600">Compare illustrative cover options, exclusions and insurer terms.</p></div><button type="button" class="offer-button" data-partner="Renters Micro-Insurance">Explore</button></article>
+        </div>
+        <section id="adminPartnerView" class="mt-6 hidden rounded-3xl border border-emerald-200 bg-emerald-50 p-5 sm:p-7">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3"><div><span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Partner / Admin view · local demo</span><h3 class="mt-1 text-lg font-extrabold text-forest-900">Home-loan lead pipeline</h3><p class="mt-1 text-xs text-stone-600">Lead records and indicative DSA commission preview; no partner receives this data.</p></div><strong id="leadCountBadge" class="text-sm text-forest-900">0 leads</strong></div>
+          <div id="leadAdminList" class="mt-4 space-y-2"></div>
+        </section>
+        <p class="mt-5 text-[10px] leading-relaxed text-stone-500">Rates, LTV, fees and credit approvals are illustrative and subject to lender underwriting, eligibility, verified KYC, explicit consent and applicable RBI / digital lending guidelines. No lead is sent to any partner by this demo.</p>
+      </div>
+    </section>
+
+    <!-- 3. 4-STAGE SECURITY DEPOSIT BREAKPOINTS & CONDITION VAULT CHECKLIST -->
+    <section id="deposit-vault" class="py-14 sm:py-20 bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mb-10">
+          <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Step 03 • Deposit &amp; Move-In/Out Proof</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">
+            4-Stage Deposit Breakpoints &amp; Condition Vault
+          </h2>
+          <p class="text-sm sm:text-base text-stone-600 mt-2">
+            Total deposit ko 4 stages mein dekhein aur move-in/move-out <strong>Condition Vault</strong> inspection checklist check karein.
+          </p>
+        </div>
+
+        <!-- Deposit Base Selector + 4 Stages -->
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-stone-50 border border-stone-200 p-4">
+          <div class="flex items-center gap-3">
+            <label for="totalDepositInput" class="text-xs sm:text-sm font-bold text-forest-900">Total Security Deposit (₹):</label>
+            <input id="totalDepositInput" type="number" min="10000" max="500000" step="5000" value="60000" oninput="renderDepositStages()" class="w-36 rounded-xl border border-stone-300 bg-white px-3 py-1.5 text-sm font-extrabold text-forest-900" />
+          </div>
+          <span class="text-xs text-stone-500">Milestones move-in proof, mid-check, aur exit settlement se jude hain.</span>
+        </div>
+
+        <div id="depositStagesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <!-- Populated via JS -->
+        </div>
+        <div class="mb-10 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs leading-relaxed text-stone-700">
+          <strong class="text-forest-900">Illustrative schedule, not escrow:</strong> booking and handover percentages are a sample split. Lock-in and notice terms are recorded in the agreement; exit refund is reconciled against the Condition Vault with itemized deductions. Optional deposit-credit or instalment support is subject to partner NBFC approval, affordability checks and separate consent.
+        </div>
+
+        <!-- Timestamped Condition Vault Checklist -->
+        <div class="rounded-3xl bg-stone-50 border border-stone-200 p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <div>
+              <h3 class="text-xl font-extrabold text-forest-900">
+                <i class="fa-solid fa-camera-rotate text-terracotta-600 mr-2"></i>Condition Vault Inspection Checklist
+              </h3>
+              <p class="text-xs text-stone-600 mt-0.5">Move-in ke din har item ka timestamped photo/video + sign lock karein taaki move-out par dispute na ho.</p>
+            </div>
+            <span id="vaultProgressBadge" class="rounded-full bg-forest-100 text-forest-900 px-3.5 py-1.5 text-xs font-extrabold self-start">
+              2 / 6 Items Vaulted
+            </span>
+          </div>
+
+          <div id="vaultChecklistContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VERIFIED DAILY HELPER HUB -->
+    <section id="helper-hub" class="py-14 sm:py-20 bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div class="max-w-3xl">
+            <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">People who make a home</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">Daily Helper Hub</h2>
+            <p class="text-sm sm:text-base text-stone-600 mt-2">Explore locally verified service profiles, track attendance or leave, and see an estimated monthly UPI payout ledger.</p>
+          </div>
+          <div class="rounded-2xl bg-forest-900 px-5 py-3 text-white">
+            <p class="text-[11px] font-bold uppercase tracking-wide text-emerald-200">Monthly payout estimate</p>
+            <p id="helperPayoutTotal" class="text-2xl font-extrabold">₹5,800</p>
+          </div>
+        </div>
+        <div id="helperGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+        <p class="mt-4 text-[11px] text-stone-500">Profiles and verification indicators are sample data for this prototype. Confirm identity, references, scope and pay directly before hiring.</p>
+      </div>
+    </section>
+
+    <!-- 4. DAILY HOME SERVICES & LIVING ADD-ONS CALCULATOR -->
+    <section id="home-addons" class="py-14 sm:py-20 bg-stone-50">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mb-10">
+          <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Step 04 • Rozmarra Ghar Ki Suvidha</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-forest-900 mt-1">
+            Daily Home Services &amp; Living Add-Ons Calculator
+          </h2>
+          <p class="text-sm sm:text-base text-stone-600 mt-2">
+            Verified <strong>Maid, Cook, Dhobi, Deep Cleaning, Repairs/AC, aur Wi-Fi/Bills</strong> ka monthly hisaab aur platform service ledger estimate karein.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div id="addonsListContainer" class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Populated via JS -->
+          </div>
+
+          <div class="lg:col-span-4 rounded-3xl bg-white border border-stone-200 p-6 shadow-sm space-y-5 lg:sticky lg:top-20">
+            <h3 class="text-lg font-extrabold text-forest-900">Monthly Living Add-Ons Bill</h3>
+            <div id="addonsBreakdown" class="space-y-2 text-xs border-y border-stone-200 py-3">
+              <!-- Populated via JS -->
+            </div>
+            <div class="space-y-1.5 text-sm">
+              <div class="flex justify-between">
+                <span class="text-stone-600">Services Subtotal</span>
+                <span id="addonsSubtotal" class="font-bold text-forest-900">₹5,800</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-stone-500">Ledger &amp; Attendance Sync</span>
+                <span id="addonsLedgerFee" class="font-semibold text-emerald-700">₹199 / mo</span>
+              </div>
+              <div class="flex justify-between text-base font-extrabold border-t border-stone-200 pt-2">
+                <span>Est. Monthly Total</span>
+                <span id="addonsGrandTotal" class="text-terracotta-600">₹5,999 / mo</span>
+              </div>
+            </div>
+            <button type="button" onclick="saveAddonsPlan()" class="w-full rounded-xl bg-forest-900 hover:bg-forest-800 text-white font-bold py-3 px-4 text-sm transition cursor-pointer">
+              <i class="fa-solid fa-list-check mr-1.5"></i>Lock Home Services Plan
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-forest-900 text-stone-300 py-8 border-t border-forest-800">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <p><strong>NivasaClub</strong> — Verified Ghar. Smart Hisaab. Trusted Living. <span class="block mt-2 max-w-4xl text-[10px] leading-relaxed text-stone-400">Prototype only: no real KYC, DigiLocker fetch, bureau reporting, payment, escrow or credit decision is performed. Any future identity, bureau or NBFC feature requires explicit user consent, partner verification and compliance with applicable RBI/digital lending, privacy and other laws. Scores and costs shown are illustrative, not an offer or financial advice.</span></p>
+      <button type="button" onclick="openSummaryModal('revenue')" class="rounded-xl bg-terracotta-600 hover:bg-terracotta-500 text-white font-bold px-4 py-2 transition cursor-pointer">
+        View 6 Revenue Streams
+      </button>
+    </div>
+  </footer>
+
+  <!-- Summary Modal (Revenue & NBFC Model) -->
+  <div id="fintechModal" class="fintech-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="fintechModalTitle">
+    <section class="fintech-dialog">
+      <button type="button" class="fintech-close" id="fintechModalClose" aria-label="Close dialog">×</button>
+      <div id="fintechModalContent"></div>
+    </section>
+  </div>
+  <div id="infoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 p-4" role="dialog" aria-modal="true">
+    <div class="w-full max-w-2xl rounded-3xl bg-white text-slate-900 p-6 sm:p-8 shadow-2xl border border-stone-200 space-y-5">
+      <div class="flex items-start justify-between border-b border-stone-200 pb-3">
+        <div>
+          <span class="text-xs font-bold uppercase text-terracotta-600">NivasaClub Business &amp; NBFC Blueprint</span>
+          <h3 id="infoModalTitle" class="text-xl font-extrabold text-forest-900 mt-0.5">6 Revenue Streams</h3>
+        </div>
+        <button type="button" onclick="closeSummaryModal()" aria-label="Close" class="p-2 rounded-xl text-stone-500 hover:bg-stone-100 cursor-pointer">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div id="infoModalContent" class="space-y-3 text-xs sm:text-sm text-stone-700 leading-relaxed">
+        <!-- Populated via JS -->
+      </div>
+
+      <button type="button" onclick="closeSummaryModal()" class="w-full rounded-xl bg-forest-900 text-white font-bold py-2.5 text-sm cursor-pointer">
+        Done
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Toast utility (no alert/confirm)
+    let toastTimeout = null;
+    function showToast(title, body, warn = false) {
+      const box = document.getElementById("nivasaToast");
+      document.getElementById("toastTitle").textContent = title;
+      document.getElementById("toastBody").textContent = body;
+      document.getElementById("toastIcon").className = warn ? "fa-solid fa-triangle-exclamation text-xs" : "fa-solid fa-check text-xs";
+      box.classList.remove("hidden");
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => box.classList.add("hidden"), 4000);
+    }
+    function hideToast() {
+      document.getElementById("nivasaToast").classList.add("hidden");
+    }
+    function inr(val) {
+      return "₹" + Math.round(val).toLocaleString("en-IN");
+    }
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    const LISTINGS = [
+      { id: "blr-1", city: "Bengaluru", locality: "Indiranagar", type: "Apartment", beds: "2 BHK", rent: 38000, deposit: 100000, image: "photo-1600607687939-ce8a6c25118c", services: "Cook, Wi-Fi, AC service", rules: "Couple-friendly; visitor hours and move-in process disclosed." },
+      { id: "blr-2", city: "Bengaluru", locality: "HSR Layout", type: "Independent", beds: "1 BHK", rent: 26000, deposit: 60000, image: "photo-1600047509807-ba8f99d2cdde", services: "Maid, tiffin, car wash", rules: "Couple-friendly; RWA move-in timings shared before visit." },
+      { id: "mum-1", city: "Mumbai", locality: "Powai", type: "Apartment", beds: "2 BHK", rent: 62000, deposit: 186000, image: "photo-1600596542815-ffad4c1539a9", services: "Dhobi, deep clean, Wi-Fi", rules: "Standard adult KYC; society policy and guest rules available." },
+      { id: "del-1", city: "Delhi NCR", locality: "Sector 62, Noida", type: "Studio", beds: "Studio", rent: 19000, deposit: 38000, image: "photo-1600210492486-724fe5c67fb0", services: "Cook, repairs, utility split", rules: "Couple-friendly; tenant and co-occupant agreement supported." },
+      { id: "pune-1", city: "Pune", locality: "Baner", type: "Apartment", beds: "2 BHK", rent: 32000, deposit: 96000, image: "photo-1600566753086-00f18fb6b3ea", services: "Maid, packers, furniture rental", rules: "Couple-friendly; RWA rules and parking terms disclosed." },
+      { id: "hyd-1", city: "Hyderabad", locality: "Kondapur", type: "Apartment", beds: "2 BHK", rent: 30000, deposit: 90000, image: "photo-1600607687920-4e2a09cf159d", services: "Cook, AC care, Wi-Fi", rules: "Couple-friendly; adult KYC and joint lease available." },
+      { id: "lko-1", city: "Lucknow", locality: "Gomti Nagar", type: "Independent", beds: "2 BHK", rent: 22000, deposit: 44000, image: "photo-1600607687939-ce8a6c25118c", services: "Maid, deep clean, tiffin", rules: "Couple-friendly; household and visitor policies shared upfront." }
+    ];
+
+    function renderListings() {
+      const city = document.getElementById("cityFilter").value;
+      const localityFilter = document.getElementById("localityFilter");
+      const currentLocality = localityFilter.value;
+      const localities = [...new Set(LISTINGS.filter((home) => city === "all" || home.city === city).map((home) => home.locality))];
+      localityFilter.innerHTML = `<option value="all">All localities</option>${localities.map((area) => `<option value="${escapeHtml(area)}">${escapeHtml(area)}</option>`).join("")}`;
+      localityFilter.value = localities.includes(currentLocality) ? currentLocality : "all";
+
+      const type = document.getElementById("propertyTypeFilter").value;
+      const coupleOnly = document.getElementById("coupleOnlyFilter").checked;
+      const matches = LISTINGS.filter((home) =>
+        (city === "all" || home.city === city) &&
+        (localityFilter.value === "all" || home.locality === localityFilter.value) &&
+        (type === "all" || home.type === type) &&
+        (!coupleOnly || /couple-friendly/i.test(home.rules))
+      );
+      document.getElementById("listingCount").textContent = `${matches.length} verified sample ${matches.length === 1 ? "home" : "homes"} · Owners and society details shown are illustrative.`;
+      const grid = document.getElementById("listingGrid");
+      if (!matches.length) {
+        grid.innerHTML = `<div class="md:col-span-2 xl:col-span-3 rounded-2xl border border-dashed border-stone-300 bg-white p-10 text-center text-sm text-stone-600">No homes match these filters. Try another city or property type.</div>`;
+        return;
+      }
+      grid.innerHTML = matches.map((home) => `
+        <article class="overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm">
+          <div class="relative h-48 bg-forest-100">
+            <img src="https://images.unsplash.com/${home.image}?auto=format&fit=crop&w=900&q=80" alt="Sample ${home.beds} rental in ${escapeHtml(home.locality)}" loading="lazy" class="h-full w-full object-cover" onerror="this.style.display='none'">
+            <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold text-forest-900"><i class="fa-solid fa-shield-check text-emerald-700 mr-1"></i>Owner check · demo</span>
+          </div>
+          <div class="space-y-4 p-5">
+            <div class="flex items-start justify-between gap-3">
+              <div><h3 class="text-lg font-extrabold text-forest-900">${escapeHtml(home.beds)} in ${escapeHtml(home.locality)}</h3><p class="text-xs text-stone-500">${escapeHtml(home.city)} · ${escapeHtml(home.type)}</p></div>
+              <span class="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-extrabold text-emerald-800">RWA rules · sample</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 rounded-2xl bg-stone-50 p-3">
+              <div><p class="text-[10px] font-bold uppercase text-stone-500">Monthly rent</p><p class="font-extrabold text-forest-900">${inr(home.rent)}</p></div>
+              <div><p class="text-[10px] font-bold uppercase text-stone-500">Security deposit</p><p class="font-extrabold text-forest-900">${inr(home.deposit)}</p></div>
+            </div>
+            <p class="text-xs text-stone-600"><i class="fa-solid fa-house-circle-check text-emerald-700 mr-1"></i>${escapeHtml(home.rules)}</p>
+            <p class="text-xs text-stone-600"><i class="fa-solid fa-bell-concierge text-terracotta-600 mr-1"></i>Home services: ${escapeHtml(home.services)}</p>
+            <details class="rounded-xl border border-stone-200 px-3 py-2">
+              <summary class="cursor-pointer text-xs font-bold text-forest-900">Inspection &amp; agreement preview</summary>
+              <p class="pt-2 text-xs leading-relaxed text-stone-600">Room-by-room walls, plumbing, appliance and meter checklist can be timestamped in the Condition Vault. Adult KYC, co-occupant options, notice and move-in rules are agreed before e-sign.</p>
+            </details>
+            <button type="button" onclick="requestHomeVisit('${home.id}')" class="w-full rounded-xl bg-forest-900 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-forest-800">Request a visit</button>
+            <p class="text-[10px] text-stone-400">*Demo sample only—not a real verification or live listing.</p>
+          </div>
+        </article>`).join("");
+    }
+
+    function requestHomeVisit(id) {
+      const home = LISTINGS.find((item) => item.id === id);
+      if (home) showToast("Visit request noted", `Demo request for ${home.beds} in ${home.locality}. No owner has been contacted.`);
+    }
+
+    const HELPERS = [
+      { id: "maid", name: "Meena S.", role: "Maid · Cleaning & dishes", area: "Indiranagar, Bengaluru", price: 2500, rating: "4.9", leave: false, booked: false, icon: "fa-broom" },
+      { id: "cook", name: "Rafiq A.", role: "Cook · Home-style meals", area: "HSR Layout, Bengaluru", price: 3300, rating: "4.8", leave: false, booked: false, icon: "fa-kitchen-set" },
+      { id: "dhobi", name: "Sunita R.", role: "Dhobi · Wash & iron", area: "Koramangala, Bengaluru", price: 1200, rating: "4.7", leave: false, booked: false, icon: "fa-shirt" }
+    ];
+
+    function renderHelpers() {
+      const total = HELPERS.reduce((sum, helper) => sum + (helper.leave ? helper.price - Math.round(helper.price / 30) : helper.price), 0);
+      document.getElementById("helperPayoutTotal").textContent = `${inr(total)} / mo`;
+      document.getElementById("helperGrid").innerHTML = HELPERS.map((helper) => `
+        <article class="rounded-3xl border border-stone-200 bg-stone-50 p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-forest-900 text-lg text-white"><i class="fa-solid ${helper.icon}"></i></div>
+              <div><h3 class="font-extrabold text-forest-900">${escapeHtml(helper.name)}</h3><p class="text-xs text-stone-600">${escapeHtml(helper.role)}</p></div>
+            </div>
+            <span class="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-bold text-emerald-800"><i class="fa-solid fa-star mr-1"></i>${helper.rating} sample</span>
+          </div>
+          <p class="mt-4 text-xs text-stone-500"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(helper.area)} · Reference-checked sample</p>
+          <div class="mt-4 flex items-center justify-between border-t border-stone-200 pt-3">
+            <div><p class="text-[10px] font-bold uppercase text-stone-500">UPI payout estimate</p><p class="font-extrabold text-forest-900">${inr(helper.leave ? helper.price - Math.round(helper.price / 30) : helper.price)} / mo</p></div>
+            <span class="text-xs font-bold ${helper.leave ? "text-amber-700" : "text-emerald-700"}">${helper.leave ? "Leave marked" : "Present today"}</span>
+          </div>
+          <div class="mt-4 grid grid-cols-2 gap-2">
+            <button type="button" onclick="toggleHelperLeave('${helper.id}')" class="rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-bold text-forest-900">${helper.leave ? "Undo leave" : "Mark leave today"}</button>
+            <button type="button" onclick="requestHelper('${helper.id}')" class="rounded-xl bg-terracotta-600 px-3 py-2 text-xs font-bold text-white">${helper.booked ? "Intro requested" : "Request intro"}</button>
+          </div>
+        </article>`).join("");
+    }
+
+    function toggleHelperLeave(id) {
+      const helper = HELPERS.find((item) => item.id === id);
+      if (helper) {
+        helper.leave = !helper.leave;
+        renderHelpers();
+      }
+    }
+
+    function requestHelper(id) {
+      const helper = HELPERS.find((item) => item.id === id);
+      if (helper && !helper.booked) {
+        helper.booked = true;
+        renderHelpers();
+        showToast("Intro request noted", "Demo only. No helper has been contacted or booked.");
+      }
+    }
+
+    // 1. DIGILOCKER KYC SIMULATOR LOGIC
+    let activeKycRole = "tenant";
+
+    function switchKycRole(role) {
+      activeKycRole = role;
+      const tBtn = document.getElementById("kycRoleTenantBtn");
+      const lBtn = document.getElementById("kycRoleLandlordBtn");
+      const tPanel = document.getElementById("tenantKycPanel");
+      const lPanel = document.getElementById("landlordKycPanel");
+
+      if (role === "tenant") {
+        tBtn.className = "rounded-xl px-4 py-2 text-xs sm:text-sm font-bold bg-forest-900 text-white transition cursor-pointer";
+        lBtn.className = "rounded-xl px-4 py-2 text-xs sm:text-sm font-semibold text-stone-700 hover:text-forest-900 transition cursor-pointer";
+        tPanel.classList.remove("hidden");
+        lPanel.classList.add("hidden");
+      } else {
+        lBtn.className = "rounded-xl px-4 py-2 text-xs sm:text-sm font-bold bg-forest-900 text-white transition cursor-pointer";
+        tBtn.className = "rounded-xl px-4 py-2 text-xs sm:text-sm font-semibold text-stone-700 hover:text-forest-900 transition cursor-pointer";
+        lPanel.classList.remove("hidden");
+        tPanel.classList.add("hidden");
+      }
+      evaluateKyc();
+    }
+
+    function simulateDigiLockerFetch(role) {
+      if (role === "tenant") {
+        if (!document.getElementById("tenantConsentCheck").checked) {
+          showToast("Consent required", "Select the demo-consent checkbox before running the simulated fetch.", true);
+          return;
+        }
+        document.getElementById("tDigiLockerCheck").checked = true;
+        showToast("Demo attributes ready", "This is a local simulation only; no DigiLocker or Aadhaar/PAN service was contacted.");
+      } else {
+        if (!document.getElementById("landlordConsentCheck").checked) {
+          showToast("Consent required", "Select the demo-consent checkbox before running the simulated fetch.", true);
+          return;
+        }
+        document.getElementById("lDigiLockerCheck").checked = true;
+        showToast("Owner demo attributes ready", "Local simulation only; no identity or property data was sent externally.");
+      }
+      evaluateKyc();
+    }
+
+    function evaluateKyc() {
+      const listEl = document.getElementById("kycChecklistOutput");
+      const titleEl = document.getElementById("kycStatusTitle");
+      const pillEl = document.getElementById("kycScorePill");
+      const barEl = document.getElementById("kycProgressBar");
+
+      if (activeKycRole === "tenant") {
+        const name = document.getElementById("tenantNameInput").value.trim() || "Applicant";
+        const age = Number(document.getElementById("tenantAgeSelect").value);
+        const consent = document.getElementById("tenantConsentCheck").checked;
+        const dl = document.getElementById("tDigiLockerCheck").checked;
+        const selfie = document.getElementById("tSelfieCheck").checked;
+        const antiProxy = document.getElementById("tAntiProxyCheck").checked;
+        const allAdults = document.getElementById("tAllAdultsCheck").checked;
+        const income = document.getElementById("tIncomeCheck").checked;
+        const graph = document.getElementById("tGraphCheck").checked;
+        const gateSync = document.getElementById("tGateCheck").checked;
+        const isCouple = document.getElementById("tCoupleCheck").checked;
+        const coupleType = document.getElementById("coupleAgreementSelect").value;
+
+        const wrap = document.getElementById("coupleAgreementSelectorWrap");
+        const prev = document.getElementById("coupleAgreementPreview");
+        wrap.classList.toggle("hidden", !isCouple);
+
+        const agreementMap = {
+          joint: "Joint Co-Tenants: Dono adults ka naam agreement mein co-tenants ke roop mein rahega; koi intrusive sawal nahi.",
+          primary: "Primary Payer + Co-Occupant: Earning partner AutoPay/payer par aur verified partner co-occupant ke roop mein.",
+          split: "Custom Split & Notice: Rent, utility split ratio, aur exit/notice rules agreement mein pehle se darj."
+        };
+        prev.textContent = agreementMap[coupleType];
+
+        const checks = [
+          { label: "Explicit demo consent", ok: consent },
+          { label: `Simulated DigiLocker attributes (${escapeHtml(name)})`, ok: consent && dl },
+          { label: "Layer 1 · Primary payer = agreement applicant", ok: antiProxy },
+          { label: age >= 18 && allAdults ? "Layer 2 · All listed occupants are KYC'd adults" : "Layer 2 · Adult KYC required for every occupant", ok: age >= 18 && allAdults },
+          { label: "Layer 3 · Income / bank cashflow check", ok: income },
+          { label: "Layer 4 · Device, phone, UPI & address graph", ok: graph },
+          { label: "Layer 5 · Selfie match + move-in / gate sync", ok: selfie && gateSync },
+          { label: isCouple ? `Respectful agreement option · ${coupleType.toUpperCase()}` : "Individual / standard agreement", ok: true }
+        ];
+
+        const passed = checks.filter((c) => c.ok).length;
+        const pct = Math.round((passed / checks.length) * 100);
+        barEl.style.width = `${pct}%`;
+        pillEl.textContent = `${pct}% Ready`;
+        titleEl.textContent = pct === 100 ? "Tenant Demo Checks Complete" : "Action Needed in Demo";
+
+        listEl.innerHTML = checks.map((c) => `
+          <div class="flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-3.5 py-2.5">
+            <span class="text-stone-200">${c.label}</span>
+            <span class="font-bold ${c.ok ? "text-emerald-400" : "text-terracotta-400"}">${c.ok ? "PASS" : "CHECK"}</span>
+          </div>
+        `).join("");
+      } else {
+        const lName = document.getElementById("landlordNameInput").value.trim().toLowerCase();
+        const bName = document.getElementById("landlordBankNameInput").value.trim().toLowerCase();
+        const bankMatch = lName.length > 1 && lName === bName;
+        const dl = document.getElementById("lDigiLockerCheck").checked;
+        const selfie = document.getElementById("lSelfieCheck").checked;
+        const bill = document.getElementById("lBillCheck").checked;
+        const consent = document.getElementById("landlordConsentCheck").checked;
+        const coupleOptIn = document.getElementById("lCoupleOptInCheck").checked;
+
+        const checks = [
+          { label: "Explicit demo consent", ok: consent },
+          { label: "Simulated owner DigiLocker attributes", ok: consent && dl },
+          { label: "Live selfie check (simulated)", ok: selfie },
+          { label: "Payout bank account name match", ok: bankMatch },
+          { label: "Electricity / property proof check", ok: bill },
+          { label: coupleOptIn ? "Couple-friendly opt-in enabled" : "Standard listing (opt-in not enabled)", ok: true }
+        ];
+
+        const passed = checks.filter((c) => c.ok).length;
+        const pct = Math.round((passed / checks.length) * 100);
+        barEl.style.width = `${pct}%`;
+        pillEl.textContent = `${pct}% Ready`;
+        titleEl.textContent = pct === 100 ? "Owner Demo Checks Complete" : "Complete Owner Demo Checks";
+
+        listEl.innerHTML = checks.map((c) => `
+          <div class="flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-3.5 py-2.5">
+            <span class="text-stone-200">${c.label}</span>
+            <span class="font-bold ${c.ok ? "text-emerald-400" : "text-terracotta-400"}">${c.ok ? "PASS" : "MISMATCH"}</span>
+          </div>
+        `).join("");
+      }
+    }
+
+    function confirmKycStatus() {
+      const progress = document.getElementById("kycProgressBar").style.width;
+      if (progress !== "100%") {
+        showToast("Checks incomplete", "Complete required demo checks and provide explicit consent before generating a summary.", true);
+        return;
+      }
+      showToast("Demo summary generated", "Illustrative only. This is not a real KYC pass, verified identity or agreement.");
+    }
+
+    // 2. NIVASA SCORE (300-900) & AUTOPAY SIMULATOR
+    let currentPayMode = "enach";
+
+    function setPaymentMode(mode) {
+      currentPayMode = mode;
+      ["enach", "upi", "card"].forEach((m) => {
+        const btn = document.getElementById(`mode${m.charAt(0).toUpperCase() + m.slice(1)}Btn`);
+        if (m === mode) {
+          btn.className = "pay-mode-btn rounded-xl border-2 border-forest-900 bg-forest-100/60 p-3 text-left transition cursor-pointer";
+        } else {
+          btn.className = "pay-mode-btn rounded-xl border border-stone-200 bg-stone-50 p-3 text-left transition cursor-pointer";
+        }
+      });
+      updateAutoPayScore();
+    }
+
+    function updateAutoPayScore() {
+      const rent = Number(document.getElementById("monthlyRentInput").value);
+      const onTime = Number(document.getElementById("onTimeMonthsInput").value);
+      const bounces = Number(document.getElementById("bounceCountInput").value);
+
+      document.getElementById("monthlyRentLabel").textContent = inr(rent);
+      document.getElementById("onTimeMonthsLabel").textContent = `${onTime} Mos`;
+      document.getElementById("bounceCountLabel").textContent = `${bounces} ${bounces === 1 ? "Bounce" : "Bounces"}`;
+
+      const modeBonus = currentPayMode === "enach" ? 24 : currentPayMode === "upi" ? 18 : 10;
+      const score = Math.max(300, Math.min(900, 610 + modeBonus + (onTime * 11) - (bounces * 60)));
+
+      const cardFee = currentPayMode === "card" ? Math.round(rent * 0.0125) : 0;
+      const bouncePenalty = bounces * Math.max(400, Math.round(rent * 0.025));
+      const total = rent + cardFee + bouncePenalty;
+
+      document.getElementById("nivasaScoreNum").textContent = score;
+      document.getElementById("calcRentOut").textContent = inr(rent);
+      document.getElementById("calcCardFeeOut").textContent = cardFee > 0 ? `+${inr(cardFee)}` : "₹0";
+      document.getElementById("calcBouncePenaltyOut").textContent = bouncePenalty > 0 ? `+${inr(bouncePenalty)}` : "₹0";
+      document.getElementById("calcTotalPayOut").textContent = inr(total);
+
+      const pct = Math.round(((score - 300) / 600) * 100);
+      document.getElementById("nivasaScoreBar").style.width = `${pct}%`;
+
+      const tierEl = document.getElementById("nivasaTierLabel");
+      const nbfcEl = document.getElementById("nbfcEligibilityText");
+      const gateEl = document.getElementById("gatingRuleText");
+
+      if (score >= 750) {
+        tierEl.textContent = "Prime NBFC Tier";
+        nbfcEl.textContent = `NBFC Deposit / Credit Eligibility: Up to ${inr(rent * 2.5)} structured support`;
+        gateEl.textContent = "Illustrative internal score only. Any NBFC decision or bureau reporting requires separate consent, partner checks and applicable compliance.";
+      } else if (score >= 620) {
+        tierEl.textContent = "Standard Verified";
+        nbfcEl.textContent = `NBFC Deposit / Credit Eligibility: Up to ${inr(rent * 1.5)} milestone support`;
+        gateEl.textContent = "Illustrative internal score only; partner credit and bureau treatment are not guaranteed and are not active in this demo.";
+      } else {
+        tierEl.textContent = "Low Score / Bounce Alert";
+        nbfcEl.textContent = "NBFC Deposit Credit: Restricted due to bounces/low score";
+        gateEl.textContent = "Demo estimate only. A low result does not make a real eligibility decision or report to a credit bureau.";
+      }
+    }
+
+    // 3. 4-STAGE DEPOSIT BREAKPOINTS & CONDITION VAULT CHECKLIST
+    function renderDepositStages() {
+      const depositInput = document.getElementById("totalDepositInput");
+      const totalDep = Math.min(500000, Math.max(10000, Number(depositInput.value) || 60000));
+      depositInput.value = totalDep;
+      const stages = [
+        { s: "Stage 01 • 15%", name: "Booking Lock", amt: totalDep * 0.15, note: "Flat hold during KYC & e-Sign." },
+        { s: "Stage 02 • 85%", name: "Handover & Vault", amt: totalDep * 0.85, note: "Key + move-in photo/meter sign." },
+        { s: "Stage 03 • Mid-tenure", name: "Condition Check", amt: 0, note: "Inspection milestone only; no extra deposit charged." },
+        { s: "Stage 04 • Exit", name: "Settlement Target", amt: totalDep, note: "Illustrative refund ceiling; itemized Vault reconciliation applies." }
+      ];
+
+      document.getElementById("depositStagesGrid").innerHTML = stages.map((st) => `
+        <div class="rounded-2xl border border-stone-200 bg-stone-50 p-5 space-y-1.5">
+          <span class="text-xs font-extrabold uppercase text-terracotta-600">${st.s}</span>
+          <h3 class="text-base font-extrabold text-forest-900">${st.name}</h3>
+          <p class="text-lg font-extrabold text-forest-800">${st.s.startsWith("Stage 04") ? `Up to ${inr(st.amt)}` : st.amt > 0 ? inr(st.amt) : "No additional payment"}</p>
+          <p class="text-xs text-stone-600">${st.note}</p>
+        </div>
+      `).join("");
+    }
+
+    const VAULT_ITEMS = [
+      { id: "v1", label: "Living Room & Hall Walls + Ceiling", meta: "Move-in baseline · add local photo/video", checked: true, proof: "" },
+      { id: "v2", label: "Electricity & Sub-Meter Initial Reading", meta: "Record the reading · local proof option", checked: true, proof: "" },
+      { id: "v3", label: "Kitchen Sink, Tiles, Hob & Exhaust", meta: "Move-in baseline · add local photo/video", checked: false, proof: "" },
+      { id: "v4", label: "Bathrooms, Geyser, Taps & Plumbing", meta: "Leakage and fitting log · local proof option", checked: false, proof: "" },
+      { id: "v5", label: "AC, Fans, Lights & Switchboards", meta: "Appliance snapshot · local proof option", checked: false, proof: "" },
+      { id: "v6", label: "Doors, Locks, Windows & Balcony Grill", meta: "Keys handover count · local proof option", checked: false, proof: "" }
+    ];
+
+    function renderVaultChecklist() {
+      const container = document.getElementById("vaultChecklistContainer");
+      const doneCount = VAULT_ITEMS.filter((i) => i.checked).length;
+      document.getElementById("vaultProgressBadge").textContent = `${doneCount} / ${VAULT_ITEMS.length} Items Vaulted`;
+
+      container.innerHTML = VAULT_ITEMS.map((item) => `
+      <div class="rounded-2xl border ${item.checked ? "border-forest-700 bg-forest-100/40" : "border-stone-200 bg-white"} p-4">
+        <label class="flex items-start justify-between gap-3 cursor-pointer">
+          <span class="flex items-start gap-3">
+            <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleVaultItem('${item.id}', this.checked)" class="mt-1 h-4 w-4 accent-forest-900 cursor-pointer" />
+            <span><span class="block text-xs sm:text-sm font-bold text-forest-900">${escapeHtml(item.label)}</span><span class="mt-0.5 block text-[11px] text-stone-500">${escapeHtml(item.meta)}</span></span>
+          </span>
+          <span class="rounded-md ${item.checked ? "bg-emerald-700 text-white" : "bg-stone-200 text-stone-600"} px-2 py-0.5 text-[10px] font-extrabold uppercase">${item.checked ? "Checked" : "Pending"}</span>
+        </label>
+        <div class="mt-3 border-t border-stone-200 pt-3">
+          <label class="text-[11px] font-bold text-forest-900" for="proof-${item.id}">Photo/video proof (optional)</label>
+          <input id="proof-${item.id}" type="file" accept="image/*,video/*" capture="environment" onchange="attachVaultProof('${item.id}', this)" class="mt-1 block w-full text-[11px] text-stone-600 file:mr-2 file:rounded-lg file:border-0 file:bg-forest-900 file:px-3 file:py-1.5 file:font-bold file:text-white">
+          <p class="mt-1 text-[10px] text-stone-500">${item.proof ? `Selected locally: ${escapeHtml(item.proof)}` : "No file selected · not uploaded or permanently stored"}</p>
+        </div>
+      </div>`).join("");
+    }
+
+    function toggleVaultItem(id, checked) {
+      const target = VAULT_ITEMS.find((i) => i.id === id);
+      if (target) {
+      target.checked = checked;
+        renderVaultChecklist();
+      }
+    }
+
+    function attachVaultProof(id, input) {
+      const target = VAULT_ITEMS.find((item) => item.id === id);
+      if (!target || !input.files || !input.files[0]) return;
+      target.proof = `${input.files[0].name} · selected ${new Date().toLocaleString("en-IN")}`;
+      target.checked = true;
+      renderVaultChecklist();
+      showToast("Proof selected locally", "The file is not uploaded or stored by this demo. Re-select it if you reload the page.");
+    }
+
+    // 4. DAILY HOME SERVICES & LIVING ADD-ONS CALCULATOR
+    const ADDONS = [
+      { id: "a_maid", title: "Maid (Jhadu-Pocha / Bartan)", price: 2500, icon: "fa-broom", checked: true },
+      { id: "a_cook", title: "Home Cook (Daily Meal)", price: 3300, icon: "fa-kitchen-set", checked: true },
+      { id: "a_dhobi", title: "Dhobi & Ironing Service", price: 1200, icon: "fa-shirt", checked: false },
+      { id: "a_movers", title: "Packers & Movers Set-Aside", price: 900, icon: "fa-truck-moving", checked: false },
+      { id: "a_furniture", title: "Furniture / Appliance Rental", price: 2400, icon: "fa-couch", checked: false },
+      { id: "a_clean", title: "Deep Cleaning / Pest Control", price: 2200, icon: "fa-sparkles", checked: false },
+      { id: "a_paint", title: "Touch-Up Paint Set-Aside", price: 500, icon: "fa-paint-roller", checked: false },
+      { id: "a_repair", title: "Plumber / Electrician / AC Care", price: 900, icon: "fa-wrench", checked: false },
+      { id: "a_wifi", title: "Wi-Fi & Utility Bill Split", price: 1100, icon: "fa-wifi", checked: false },
+      { id: "a_tiffin", title: "Tiffin Subscription", price: 2800, icon: "fa-bowl-food", checked: false },
+      { id: "a_carwash", title: "Car Wash", price: 700, icon: "fa-car", checked: false },
+      { id: "a_insurance", title: "Rental / Contents Insurance", price: 350, icon: "fa-shield-halved", checked: false }
+    ];
+
+    function renderAddons() {
+      const container = document.getElementById("addonsListContainer");
+      container.innerHTML = ADDONS.map((a) => `
+        <label class="rounded-2xl border-2 ${a.checked ? "border-forest-900 bg-white shadow-xs" : "border-stone-200 bg-white/70"} p-4 transition cursor-pointer flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${a.checked ? "bg-forest-900 text-white" : "bg-stone-100 text-terracotta-600"}">
+              <i class="fa-solid ${a.icon}"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-forest-900">${a.title}</p>
+              <p class="text-xs font-extrabold text-terracotta-600">${inr(a.price)} / mo</p>
+            </div>
+          </div>
+          <input type="checkbox" ${a.checked ? "checked" : ""} onchange="toggleAddon('${a.id}', this.checked)" class="h-4 w-4 accent-forest-900 cursor-pointer" />
+        </label>
+      `).join("");
+
+      updateAddonsBill();
+    }
+
+    function toggleAddon(id, checked) {
+      const item = ADDONS.find((a) => a.id === id);
+      if (item) {
+        item.checked = checked;
+        renderAddons();
+      }
+    }
+
+    function updateAddonsBill() {
+      const active = ADDONS.filter((a) => a.checked);
+      const breakdown = document.getElementById("addonsBreakdown");
+      const sub = active.reduce((sum, item) => sum + item.price, 0);
+      const ledgerFee = active.length > 0 ? 199 : 0;
+
+      if (active.length === 0) {
+        breakdown.innerHTML = `<p class="text-stone-400 py-2">Koi service select nahi ki gayi.</p>`;
+      } else {
+        breakdown.innerHTML = active.map((item) => `
+          <div class="flex justify-between text-stone-700">
+            <span>${item.title}</span>
+            <span class="font-bold text-forest-900">${inr(item.price)}</span>
+          </div>
+        `).join("");
+      }
+
+      document.getElementById("addonsSubtotal").textContent = inr(sub);
+      document.getElementById("addonsLedgerFee").textContent = ledgerFee > 0 ? `${inr(ledgerFee)} / mo` : "₹0";
+      document.getElementById("addonsGrandTotal").textContent = `${inr(sub + ledgerFee)} / mo`;
+    }
+
+    function saveAddonsPlan() {
+      const active = ADDONS.filter((a) => a.checked);
+      const sub = active.reduce((sum, item) => sum + item.price, 0);
+      const total = sub + (active.length > 0 ? 199 : 0);
+      showToast("Home Services Plan Locked", `${active.length} services selected • Estimated monthly total: ${inr(total)}.`);
+    }
+
+    // Modal Logic
+    function openSummaryModal(type) {
+      const modal = document.getElementById("infoModal");
+      const title = document.getElementById("infoModalTitle");
+      const body = document.getElementById("infoModalContent");
+
+      if (type === "nbfc") {
+        title.textContent = "NBFC, Fintech & Pilot Execution Plan";
+        body.innerHTML = `
+          <p><strong>Phase 1 · Pilot:</strong> One rental pocket; opt-in owner and adult-tenant onboarding, transparent agreements, Condition Vault workflow and local helper discovery.</p>
+          <p><strong>Phase 2 · Score &amp; NBFC co-lending:</strong> Validate payment-history signals and affordability. Integrate with regulated lending partners only after separate consent, partner diligence and legal/compliance review.</p>
+          <p><strong>Phase 3 · Scale:</strong> Expand city-by-city with property/RWA tools, helper operations and customer support controls.</p>
+          <p><strong>Compliance gate:</strong> KYC, bureau reporting, payment mandates and lending are not active here. Any production use is subject to explicit consent, applicable RBI/digital lending guidelines, privacy law and partner verification.</p>
+        `;
+      } else {
+        title.textContent = "NivasaClub — 6 Revenue Streams";
+        body.innerHTML = `
+          <p><strong>1. Credit Card Rent &amp; Bounce Share:</strong> Card rent convenience fee (1%–1.5%) aur bounce/late penalty share.</p>
+          <p><strong>2. Listings, Deals &amp; E-Agreements:</strong> Verified listing boosts, flat facilitation fee, aur digital agreement margin.</p>
+          <p><strong>3. Deposit &amp; Condition Vault:</strong> Milestone deposit management aur move-in/out condition vault protection fee.</p>
+          <p><strong>4. Maid, Cook, Dhobi &amp; Add-Ons:</strong> Helper ledger subscription + dhobi, deep cleaning, repair, aur mover commissions.</p>
+          <p><strong>5. NBFC Credit &amp; Insurance:</strong> Deposit/rent credit lines, lending spreads/DSA, aur home/contents insurance.</p>
+          <p><strong>6. B2B Co-Living &amp; Property SaaS:</strong> Per-bed/per-flat monthly dashboard for PG, co-living, and property managers.</p>
+        `;
+      }
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeSummaryModal() {
+      const modal = document.getElementById("infoModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderListings();
+      evaluateKyc();
+      updateAutoPayScore();
+      renderDepositStages();
+      renderVaultChecklist();
+      renderHelpers();
+      renderAddons();
+    });
+  </script>
+  <script src="fintech.js"></script>
+</body>
+</html>
