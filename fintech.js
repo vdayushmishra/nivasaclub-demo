@@ -279,7 +279,7 @@
   function updateAdminView() {
     $("#leadCountBadge").textContent = `${state.leads.length} ${state.leads.length === 1 ? "lead" : "leads"}`;
     $("#leadAdminList").innerHTML = state.leads.length
-      ? state.leads.slice().reverse().map(lead => `<div class="lead-admin-row"><div><strong>${plainText(lead.name)}</strong><small>${plainText(lead.trackingId)} · ${plainText(lead.partner)}</small></div><div><strong>${plainText(lead.city)}</strong><small>Score ${lead.score} · ${plainText(lead.income)}</small></div><div><strong>${money(lead.loanAmount)}</strong><small>Requested amount</small></div><div class="commission">${money(lead.commission)}<small>Indicative DSA*</small></div></div>`).join("")
+      ? state.leads.slice().reverse().map(lead => `<div class="lead-admin-row"><div><strong>${plainText(lead.name)}</strong><small>${plainText(lead.trackingId)} · ${plainText(lead.partner)}</small></div><div><strong>${plainText(lead.city)}</strong><small>Score ${lead.score} · ${plainText(lead.income)} · ${lead.verifiedDemoKyc ? "demo KYC complete" : "KYC pending"}</small></div><div><strong>${money(lead.loanAmount)}</strong><small>Requested amount</small></div><div class="commission">${money(lead.commission)}<small>Indicative DSA*</small></div></div>`).join("")
       : `<p class="rounded-xl border border-dashed border-emerald-200 bg-white p-5 text-xs text-stone-500">No local leads yet. Use a partner offer card to create a sample callback request.</p>`;
   }
 
@@ -449,7 +449,7 @@
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast("Receipt downloaded", "Illustrative HTML receipt saved locally.");
   }
 
@@ -457,12 +457,15 @@
     const tenantName = $("#tenantNameInput").value.trim();
     const landlordName = $("#landlordNameInput").value.trim();
     const applicant = state.role === "landlord" ? landlordName : tenantName;
+    const verifiedDemoKyc = state.kycRole === "landlord"
+      ? $("#landlordConsentCheck").checked && $("#kycProgressBar").style.width === "100%"
+      : $("#tenantConsentCheck").checked && $("#kycProgressBar").style.width === "100%";
     const selectedCity = $("#cityFilter").value;
     const city = selectedCity === "all" ? "Bengaluru" : selectedCity;
     const amount = Math.max(0, Number($("#propertyValueSlider").value) - Number($("#downPaymentSlider").value));
     const score = getCurrentScore();
     modalContent.innerHTML = `<span class="fintech-kicker">PARTNER CALLBACK · LOCAL DEMO</span><h2 id="fintechModalTitle">Check an exact offer</h2>
-      <p class="fintech-subtitle">Review the pre-filled details, then create a local callback lead. Nothing is sent to a lender, NBFC or DSA.</p>
+      <p class="fintech-subtitle">Review the pre-filled details, then create a local callback lead. ${verifiedDemoKyc ? "Name comes from a completed simulated KYC profile." : "Name comes from the editable sample profile; KYC is not marked complete."} Nothing is sent to a lender, NBFC or DSA.</p>
       <form id="leadForm">
         <div class="lead-grid">
           <label>Applicant name<input name="name" required value="${plainText(applicant || "Sample Applicant")}"></label>
@@ -488,6 +491,7 @@
         income: String(form.get("income")),
         partner: String(form.get("partner")),
         score,
+        verifiedDemoKyc,
         loanAmount,
         commission: Math.round(loanAmount * 0.005),
         createdAt: new Date().toISOString()
